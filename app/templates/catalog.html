@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar, score_badge, flag_chip %}
+{% block title %}Каталог{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Каталог</h1></div>
+<form class="filters" method="get" action="/catalog">
+  <input name="q" value="{{ q }}" placeholder="Поиск по имени, нику, описанию">
+  <select name="flag">
+    <option value="">Все флаги</option>
+    {% for f in flags %}<option value="{{ f.id }}" {{ 'selected' if flag == f.id }}>{{ f.name }}</option>{% endfor %}
+  </select>
+  <select name="sort">
+    {% for k, t in [('recent','Новые'),('score','По баллу'),('name','По имени'),('times','По количеству раз')] %}
+    <option value="{{ k }}" {{ 'selected' if sort == k }}>{{ t }}</option>{% endfor %}
+  </select>
+  <button class="btn">Применить</button>
+</form>
+
+{% if not partners %}
+  <div class="empty card">Ничего не найдено.</div>
+{% else %}
+<div class="grid">
+  {% for p in partners %}
+  <a class="pcard card" href="/partners/{{ p.id }}">
+    {{ avatar(p, 'avatar-card') }}
+    <div class="pcard-body">
+      <div class="pcard-top"><b>{{ p.name }}</b>{{ score_badge(p.overall) }}</div>
+      {% if p.nickname %}<div class="muted">«{{ p.nickname }}»</div>{% endif %}
+      <div class="chips">{% for f in p.flags[:5] %}{{ flag_chip(f) }}{% endfor %}</div>
+      {% if p.description %}<p class="desc">{{ p.description[:110] }}{% if p.description|length > 110 %}…{% endif %}</p>{% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

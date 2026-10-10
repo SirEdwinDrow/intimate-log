@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar, score_badge, flag_chip %}
+{% block title %}{{ p.name }}{% endblock %}
+{% block content %}
+<article class="profile card">
+  <div class="profile-photo">{{ avatar(p, 'avatar-xl') }}</div>
+  <div class="profile-info">
+    <div class="profile-head">
+      <div>
+        <h1>{{ p.name }}</h1>
+        {% if p.nickname %}<div class="muted">«{{ p.nickname }}»</div>{% endif %}
+      </div>
+      <div class="profile-score">{{ score_badge(p.overall) }}{% if rank %}<div class="muted">#{{ rank }} в лидерборде</div>{% endif %}</div>
+    </div>
+    <div class="meta">
+      {% if p.age %}<span>{{ p.age }} лет</span>{% endif %}
+      {% if p.met_on %}<span>Знакомство: {{ p.met_on.strftime('%d.%m.%Y') }}</span>{% endif %}
+      <span>Раз: {{ p.times }}</span>
+    </div>
+    <div class="chips">{% for f in p.flags %}{{ flag_chip(f) }}{% endfor %}</div>
+    {% if p.description %}<p class="description">{{ p.description }}</p>{% endif %}
+  </div>
+</article>
+
+<section class="card">
+  <h2>Оценки</h2>
+  <div class="bars">
+  {% for c in CRITERIA %}
+    {% set v = scores.get(c.key) %}
+    <div class="bar-row">
+      <span class="bar-label">{{ c.title }}</span>
+      <div class="bar"><div class="bar-fill" style="width: {{ (v or 0) * 10 }}%"></div></div>
+      <span class="bar-val">{{ v if v else '—' }}</span>
+    </div>
+  {% endfor %}
+  </div>
+</section>
+
+<div class="actions">
+  <a class="btn btn-primary" href="/partners/{{ p.id }}/edit">Редактировать</a>
+  <form method="post" action="/partners/{{ p.id }}/delete" class="inline" onsubmit="return confirm('Удалить карточку навсегда?')">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <button class="btn btn-danger">Удалить</button>
+  </form>
+</div>
+{% endblock %}

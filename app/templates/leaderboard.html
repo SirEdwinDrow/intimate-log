@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar, score_badge, flag_chip %}
+{% block title %}Лидерборд{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Лидерборд</h1>
+  <div class="stats">
+    <div><b>{{ total }}</b><span>в каталоге</span></div>
+    <div><b>{{ partners|length }}</b><span>с оценкой</span></div>
+    <div><b>{{ avg if avg is not none else '—' }}</b><span>средний балл</span></div>
+  </div>
+</div>
+
+{% if not partners %}
+  <div class="empty card">Пока пусто. <a href="/partners/new">Создай первую карточку</a> и поставь оценки.</div>
+{% else %}
+  <div class="podium">
+    {% for p in partners[:3] %}
+    <a class="podium-item place-{{ loop.index }}" href="/partners/{{ p.id }}">
+      <div class="place">#{{ loop.index }}</div>
+      {{ avatar(p, 'avatar-lg') }}
+      <div class="pname">{{ p.name }}</div>
+      {{ score_badge(p.overall) }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <table class="board">
+    <thead><tr><th>#</th><th></th><th>Имя</th><th>Флаги</th><th>Раз</th><th>Балл</th></tr></thead>
+    <tbody>
+    {% for p in partners %}
+      <tr onclick="location.href='/partners/{{ p.id }}'">
+        <td class="rank">{{ loop.index }}</td>
+        <td>{{ avatar(p, 'avatar-sm') }}</td>
+        <td><a href="/partners/{{ p.id }}">{{ p.name }}</a>{% if p.nickname %} <span class="muted">«{{ p.nickname }}»</span>{% endif %}</td>
+        <td><div class="chips">{% for f in p.flags[:4] %}{{ flag_chip(f) }}{% endfor %}{% if p.flags|length > 4 %}<span class="muted">+{{ p.flags|length - 4 }}</span>{% endif %}</div></td>
+        <td>{{ p.times }}</td>
+        <td>{{ score_badge(p.overall) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% if best_by %}
+  <h2>Лучшие по критериям</h2>
+  <div class="best-grid">
+    {% for c, p, v in best_by %}
+    <a class="best card" href="/partners/{{ p.id }}">
+      <span class="muted">{{ c.title }}</span>
+      <b>{{ p.name }}</b>
+      <span class="bestv">{{ v }}/10</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock %}

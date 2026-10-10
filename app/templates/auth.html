@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth card">
+  {% if mode == 'register' %}
+    <h1>Регистрация</h1>
+    {% if closed %}
+      <p class="muted">Регистрация закрыта администратором.</p>
+      <a href="/login">Войти</a>
+    {% else %}
+    {% if error %}<div class="flash flash-err">{{ error }}</div>{% endif %}
+    <form method="post" action="/register">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <label>Логин<input name="username" value="{{ username or '' }}" required autocomplete="username"></label>
+      <label>Пароль<input type="password" name="password" required minlength="8" autocomplete="new-password"></label>
+      <button class="btn btn-primary">Создать аккаунт</button>
+    </form>
+    <p class="muted">Уже есть аккаунт? <a href="/login">Войти</a></p>
+    {% endif %}
+  {% else %}
+    <h1>Вход</h1>
+    {% if error %}<div class="flash flash-err">{{ error }}</div>{% endif %}
+    <form method="post" action="/login">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <label>Логин<input name="username" value="{{ username or '' }}" required autocomplete="username"></label>
+      <label>Пароль<input type="password" name="password" required autocomplete="current-password"></label>
+      <button class="btn btn-primary">Войти</button>
+    </form>
+    {% if can_register %}<p class="muted">Нет аккаунта? <a href="/register">Регистрация</a></p>{% endif %}
+  {% endif %}
+</section>
+{% endblock %}

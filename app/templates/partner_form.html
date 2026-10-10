@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Редактирование' if partner else 'Новая карточка' }}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ 'Редактировать: ' ~ partner.name if partner else 'Новая карточка' }}</h1></div>
+{% if error %}<div class="flash flash-err">{{ error }}</div>{% endif %}
+<form class="card form" method="post" enctype="multipart/form-data"
+      action="{{ '/partners/%d/edit'|format(partner.id) if partner else '/partners' }}">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+
+  <fieldset>
+    <legend>Основное</legend>
+    <div class="row">
+      <label>Имя*<input name="name" required maxlength="80" value="{{ partner.name if partner else '' }}"></label>
+      <label>Прозвище<input name="nickname" maxlength="80" value="{{ partner.nickname or '' if partner else '' }}"></label>
+    </div>
+    <div class="row">
+      <label>Возраст<input name="age" type="number" min="18" max="120" value="{{ partner.age or '' if partner else '' }}"></label>
+      <label>Дата знакомства<input name="met_on" type="date" value="{{ partner.met_on.isoformat() if partner and partner.met_on else '' }}"></label>
+      <label>Сколько раз<input name="times" type="number" min="1" value="{{ partner.times if partner else 1 }}"></label>
+    </div>
+    <label>Описание<textarea name="description" rows="5" maxlength="5000" placeholder="Как познакомились, что запомнилось…">{{ partner.description if partner else '' }}</textarea></label>
+    <label>Фото
+      <input type="file" name="photo" accept="image/*">
+      <small class="muted">EXIF и геометка удаляются автоматически. Фото доступны только тебе.</small>
+    </label>
+    {% if partner and partner.photo %}
+      <label class="check"><input type="checkbox" name="remove_photo" value="1"> Удалить текущее фото</label>
+    {% endif %}
+  </fieldset>
+
+  <fieldset>
+    <legend>Оценки (1–10)</legend>
+    {% for c in CRITERIA %}
+    <div class="crit">
+      <div class="crit-label"><b>{{ c.title }}</b><small class="muted">{{ c.hint }} · вес {{ c.weight }}</small></div>
+      <div class="pills">
+        {% for v in range(1, 11) %}
+        <label class="pill"><input type="radio" name="score_{{ c.key }}" value="{{ v }}" {{ 'checked' if scores.get(c.key) == v }}><span>{{ v }}</span></label>
+        {% endfor %}
+        <label class="pill pill-none"><input type="radio" name="score_{{ c.key }}" value="" {{ 'checked' if scores.get(c.key) is none }}><span>—</span></label>
+      </div>
+    </div>
+    {% endfor %}
+  </fieldset>
+
+  <fieldset>
+    <legend>Флаги</legend>
+    <div class="chips selectable">
+      {% for f in flags %}
+      <label class="chip chip-{{ f.color }}"><input type="checkbox" name="flags" value="{{ f.id }}" {{ 'checked' if f.id in selected }}>{{ f.name }}</label>
+      {% endfor %}
+    </div>
+    <label>Новый флаг<input name="new_flag" maxlength="40" placeholder="Свой пикантный флаг"></label>
+  </fieldset>
+
+  <div class="actions">
+    <button class="btn btn-primary">Сохранить</button>
+    <a class="btn" href="{{ '/partners/%d'|format(partner.id) if partner else '/catalog' }}">Отмена</a>
+  </div>
+</form>
+{% endblock %}

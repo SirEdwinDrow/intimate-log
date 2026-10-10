@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Флаги{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Флаги</h1></div>
+<form class="card filters" method="post" action="/flags">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <input name="name" maxlength="40" placeholder="Название флага" required>
+  <select name="color">
+    <option value="spicy">Пикантный</option>
+    <option value="green">Green flag</option>
+    <option value="red">Red flag</option>
+    <option value="neutral">Нейтральный</option>
+  </select>
+  <button class="btn btn-primary">Добавить</button>
+</form>
+<div class="flag-list">
+  {% for f, n in rows %}
+  <div class="flag-row card">
+    <span class="chip chip-{{ f.color }}">{{ f.name }}</span>
+    <a class="muted" href="/catalog?flag={{ f.id }}">{{ n }} карточек</a>
+    <form method="post" action="/flags/{{ f.id }}/delete" class="inline" onsubmit="return confirm('Удалить флаг?')">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <button class="linkish danger">удалить</button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+<p class="muted"><a href="/export">Экспорт всех данных в JSON</a></p>
+{% endblock %}

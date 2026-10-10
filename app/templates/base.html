@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}Intimate Log{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">Intimate<span>Log</span></a>
+  {% if user %}
+  <nav>
+    <a href="/leaderboard" class="{{ 'active' if request.url.path.startswith('/leaderboard') }}">Лидерборд</a>
+    <a href="/catalog" class="{{ 'active' if request.url.path.startswith('/catalog') }}">Каталог</a>
+    <a href="/flags" class="{{ 'active' if request.url.path.startswith('/flags') }}">Флаги</a>
+    <a href="/partners/new" class="btn btn-primary btn-sm">+ Карточка</a>
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <button class="linkish" title="{{ user.username }}">Выйти</button>
+    </form>
+  </nav>
+  {% endif %}
+</header>
+<main class="container">
+  {% for f in flashes %}<div class="flash flash-{{ f.kind }}">{{ f.msg }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="foot">Приватный дневник. Данные видишь только ты. 18+</footer>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% macro flag_chip(f) -%}<span class="chip chip-{{ f.color }}">{{ f.name }}</span>{%- endmacro %}
+
+{% macro avatar(p, cls='') -%}
+{% if p.photo %}<img class="avatar {{ cls }}" src="/photos/{{ p.photo }}" alt="{{ p.name }}" loading="lazy">
+{% else %}<div class="avatar avatar-empty {{ cls }}">{{ p.name[:1]|upper }}</div>{% endif %}
+{%- endmacro %}
+
+{% macro score_badge(v) -%}
+<span class="score tier-{{ tier(v) }}">{{ '%.1f'|format(v) if v is not none else '—' }}<small>{{ tier(v) }}</small></span>
+{%- endmacro %}

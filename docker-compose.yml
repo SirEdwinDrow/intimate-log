@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    container_name: intimate-log
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8000:8000"   # наружу — только через reverse proxy / VPN
+    volumes:
+      - ./data:/data
