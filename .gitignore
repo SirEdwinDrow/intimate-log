@@ -6,3 +6,4 @@ venv/
 data/
 .env
 *.db
+.secret_key

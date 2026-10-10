@@ -1,8 +1,7 @@
 fastapi>=0.115
-uvicorn[standard]>=0.30
+uvicorn>=0.30
 jinja2>=3.1
 sqlalchemy>=2.0.30
 python-multipart>=0.0.9
 itsdangerous>=2.2
 pillow>=10.4
-pillow-heif>=0.18

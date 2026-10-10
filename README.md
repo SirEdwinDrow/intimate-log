@@ -46,6 +46,16 @@ docker compose up -d --build
 
 Открой http://127.0.0.1:8000, зарегистрируйся, затем поставь `ALLOW_REGISTRATION=false` в `.env` и `docker compose up -d`. Данные (SQLite + фото) лежат в `./data` — его и бэкапь.
 
+## Запуск на Windows без Docker
+
+Нужен обычный Python 3.10–3.14 с [python.org](https://www.python.org/downloads/). Free-threaded сборка (`3.13t`) не подходит: под неё нет готовых пакетов.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\run.ps1
+```
+
+Скрипт сам выберет подходящий Python, создаст `.venv`, поставит зависимости, сохранит секретный ключ в `.secret_key` и запустит сервер на http://127.0.0.1:8000.
+
 ## Локальная разработка
 
 ```bash
